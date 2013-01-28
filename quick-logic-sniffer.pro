@@ -13,10 +13,12 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     lptrecorder.cpp \
-    ftdirecorder.cpp
+    ftdirecorder.cpp \
+    winioprovider.cpp
 
 HEADERS  += mainwindow.h \
     lptrecorder.h \
-    ftdirecorder.h
+    ftdirecorder.h \
+    winioprovider.h
 
 FORMS    += mainwindow.ui

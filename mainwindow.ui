@@ -18,7 +18,7 @@
     <item>
      <widget class="QStackedWidget" name="swPages">
       <property name="currentIndex">
-       <number>1</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="swpStart">
        <layout class="QVBoxLayout" name="verticalLayout">
@@ -489,6 +489,9 @@
          <layout class="QHBoxLayout" name="horizontalLayout_5">
           <item>
            <widget class="QLabel" name="label_6">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
             <property name="text">
              <string>LPT port name:</string>
             </property>
@@ -513,6 +516,13 @@
             </item>
            </widget>
           </item>
+          <item>
+           <widget class="QCheckBox" name="cbMicronasMode_LPT">
+            <property name="text">
+             <string>Micronas mode</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </item>
         <item>
@@ -527,14 +537,14 @@
           <item>
            <widget class="QLabel" name="label_7">
             <property name="text">
-             <string>Buffer count:</string>
+             <string>Buffer count (16 bit words):</string>
             </property>
            </widget>
           </item>
           <item>
            <widget class="QComboBox" name="cbBufferSize_Lpt">
             <property name="currentIndex">
-             <number>0</number>
+             <number>3</number>
             </property>
             <item>
              <property name="text">

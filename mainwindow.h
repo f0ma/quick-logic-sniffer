@@ -34,6 +34,14 @@ private slots:
 
     void on_bpCancel_Lpt_clicked();
 
+    void on_pbBrowse_Lpt_clicked();
+
+    void record_mode_Lpt();
+    void normal_mode_Lpt();
+    void disabled_mode_Lpt();
+
+    void on_cbMicronasMode_LPT_stateChanged(int arg1);
+
 public slots:
     void ftdi_progress(int i);
     void lpt_progress(int i);
