@@ -23,12 +23,19 @@ void MainWindow::on_pbStartNext_clicked()
     {
         lptrec = new LptRecorder(this) ;
         ui->swPages->setCurrentIndex(2);
+        connect(lptrec,SIGNAL(recordStarted()),this,SLOT(lpt_started()));
+        connect(lptrec,SIGNAL(recordEnded()),this,SLOT(lpt_finished()));
+        update_lptrec_state();
+
     }
 
     if (ui->rbFtdiMode->isChecked())
     {
         ftdirec = new FTDIRecorder(this) ;
         ui->swPages->setCurrentIndex(1);
+        connect(ftdirec,SIGNAL(recordStarted()),this,SLOT(ftdi_started()));
+        connect(ftdirec,SIGNAL(recordEnded()),this,SLOT(ftdi_finished()));
+        update_ftdirec_state();
     }
 
 
@@ -37,12 +44,26 @@ void MainWindow::on_pbStartNext_clicked()
 void MainWindow::update_lptrec_state()
 {
     lptrec->loadLibrary();
+    if (lptrec->canRun()) normal_mode_Lpt();
+    else disabled_mode_Lpt();
+    ui->lDriverState_Lpt->setText(lptrec->getStatus());
 }
 
 void MainWindow::update_ftdirec_state()
 {
-//    ftdirec->LoadLibrary();
-//    ftdirec->getDevicesList();
+    ftdirec->loadLibrary();
+    QStringList devs = ftdirec->getDevicesList();
+    ui->cbEndpointList_Ftdi->clear();
+    QString ser;
+
+    foreach(ser,devs)
+    {
+    QListWidgetItem * item = new QListWidgetItem(ser);
+    item->setCheckState(Qt::Checked);
+    ui->cbEndpointList_Ftdi->addItem(item);
+    }
+
+    ui->lDriverState_Ftdi->setText(ftdirec->getStatus());
 }
 
 void MainWindow::ftdi_progress(int i)
@@ -62,6 +83,7 @@ void MainWindow::ftdi_finished()
 
 void MainWindow::lpt_finished()
 {
+   normal_mode_Lpt();
    ui->progressBar_Lpt->setValue(0);
 }
 
@@ -72,10 +94,11 @@ void MainWindow::ftdi_started()
 
 void MainWindow::lpt_started()
 {
+    record_mode_Lpt();
     ui->progressBar_Lpt->setValue(0);
 }
 
-void MainWindow::on_bpRun_Ftdi_clicked()
+void MainWindow::on_pbRun_Ftdi_clicked()
 {
 //    ftdirec->setEnabledDevices();
 //    ftdirec->setSpeed();
@@ -83,12 +106,57 @@ void MainWindow::on_bpRun_Ftdi_clicked()
 
 }
 
-void MainWindow::on_bpCancel_Ftdi_clicked()
+void MainWindow::on_pbCancel_Ftdi_clicked()
 {
 
 }
 
-void MainWindow::on_bpRun_Lpt_clicked()
+void MainWindow::on_pbBrowse_Lpt_clicked()
+{
+    QString fn = QFileDialog::getSaveFileName(this,"Data file",ui->lePathToSave_Lpt->text(),"Data files (*.dat)");
+    if (fn=="")return;
+    if(fn.endsWith(".dat")==false)fn.append(".dat");
+    ui->lePathToSave_Lpt->setText(fn);
+}
+
+void MainWindow::record_mode_Lpt()
+{
+    ui->cbPortName_Lpt->setEnabled(false);
+    ui->cbBufferSize_Lpt->setEnabled(false);
+    ui->lePathToSave_Lpt->setEnabled(false);
+    ui->pbBrowse_Lpt->setEnabled(false);
+    ui->pbRun_Lpt->setEnabled(false);
+    ui->pbCancel_Lpt->setEnabled(true);
+    ui->cbVCDsave_Lpt->setEnabled(false);
+    ui->cbOSDsave_Lpt->setEnabled(false);
+    ui->cbMicronasMode_LPT->setEnabled(false);
+}
+
+void MainWindow::normal_mode_Lpt()
+{
+    ui->cbPortName_Lpt->setEnabled(true);
+    ui->cbBufferSize_Lpt->setEnabled(true);
+    ui->lePathToSave_Lpt->setEnabled(true);
+    ui->pbBrowse_Lpt->setEnabled(true);
+    ui->pbRun_Lpt->setEnabled(true);
+    ui->pbCancel_Lpt->setEnabled(false);
+    ui->cbVCDsave_Lpt->setEnabled(true);
+    ui->cbOSDsave_Lpt->setEnabled(true);
+    ui->cbMicronasMode_LPT->setEnabled(true);
+}
+
+void MainWindow::disabled_mode_Lpt()
+{
+    record_mode_Lpt();
+    ui->pbCancel_Lpt->setEnabled(false);
+}
+
+void MainWindow::on_cbMicronasMode_LPT_stateChanged(int arg1)
+{
+    lptrec->setMode(ui->cbMicronasMode_LPT->isChecked());
+}
+
+void MainWindow::on_pbRun_Lpt_clicked()
 {
     lptrec->setPortNumber(ui->cbPortName_Lpt->currentIndex()+1);
     unsigned int bs = 1024;
@@ -124,32 +192,7 @@ void MainWindow::on_bpRun_Lpt_clicked()
     lptrec->startRecord();
 }
 
-void MainWindow::on_bpCancel_Lpt_clicked()
+void MainWindow::on_pbCancel_Lpt_clicked()
 {
     lptrec->cancel();
-}
-
-void MainWindow::on_pbBrowse_Lpt_clicked()
-{
-
-}
-
-void MainWindow::record_mode_Lpt()
-{
-
-}
-
-void MainWindow::normal_mode_Lpt()
-{
-
-}
-
-void MainWindow::disabled_mode_Lpt()
-{
-
-}
-
-void MainWindow::on_cbMicronasMode_LPT_stateChanged(int arg1)
-{
-    lptrec->setMode(ui->cbMicronasMode_LPT->isChecked());
 }

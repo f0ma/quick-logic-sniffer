@@ -3,13 +3,13 @@
 LptRecorder::LptRecorder(QObject *parent) :
     QThread(parent)
 {
-    WinIOProvider * prov = new WinIOProvider();
-    unsigned int portBase=0x378;
-    unsigned int bufferSize = 1024;
-    unsigned char * data = NULL;
-    unsigned int addr = 0;
-    bool cancelRequared = false;
-    bool micronasMode = false;
+    prov = new WinIOProvider();
+    portBase=0x378;
+    bufferSize = 1024;
+    data = NULL;
+    addr = 0;
+    cancelRequared = false;
+    micronasMode = false;
     errorString = "Yet not ready";
 }
 
@@ -42,12 +42,10 @@ bool LptRecorder::canRun()
 }
 
 
-void recordStarted();
-void recordEnded();
-
 void LptRecorder::loadLibrary()
 {
-
+    if(prov->load()==1) errorString = "";
+    else errorString = "Can't load WinIO library!";
 }
 
 void LptRecorder::setPortNumber(unsigned int bn)
@@ -80,6 +78,8 @@ void LptRecorder::setMode(bool m)
     micronasMode = m;
 
     DWORD conf = 0;
+
+    Q_ASSERT(prov->load()==1);
 
     prov->SetPortVal(portBase+0x402,0x35,1);
     prov->GetPortVal(portBase+2,&conf,1);

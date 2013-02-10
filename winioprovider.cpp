@@ -57,16 +57,19 @@ if(!lib.isLoaded())
 
 void WinIOProvider::unload()
 {
+    Q_ASSERT(initOk);
     ShutdownWinIo();
 }
 
 void WinIOProvider::setPort(unsigned int port,unsigned char value)
 {
+    Q_ASSERT(initOk);
     SetPortVal(port,value, 1);
 }
 
 unsigned char WinIOProvider::getPort(unsigned int port)
 {
+    Q_ASSERT(initOk);
     DWORD ret;
     GetPortVal(port,&ret,1);
     return (int)ret;
@@ -74,5 +77,5 @@ unsigned char WinIOProvider::getPort(unsigned int port)
 
 WinIOProvider::~WinIOProvider()
 {
-    ShutdownWinIo();
+    if(initOk==1) ShutdownWinIo();
 }

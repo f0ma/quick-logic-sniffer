@@ -18,7 +18,7 @@
     <item>
      <widget class="QStackedWidget" name="swPages">
       <property name="currentIndex">
-       <number>2</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="swpStart">
        <layout class="QVBoxLayout" name="verticalLayout">
@@ -54,7 +54,7 @@
           <item>
            <widget class="QRadioButton" name="rbLptMode">
             <property name="text">
-             <string>LPT mode</string>
+             <string>LPT mode (Hardware LPT port requared)</string>
             </property>
             <property name="checked">
              <bool>true</bool>
@@ -94,7 +94,7 @@
           <item>
            <widget class="QRadioButton" name="rbFtdiMode">
             <property name="text">
-             <string>FTDI mode</string>
+             <string>FTDI mode (FTDI 2232/4232 USB connection requared)</string>
             </property>
            </widget>
           </item>
@@ -342,7 +342,7 @@
              <bool>false</bool>
             </property>
             <property name="text">
-             <string>RAW file</string>
+             <string>DAT file</string>
             </property>
             <property name="checkable">
              <bool>true</bool>
@@ -412,7 +412,7 @@
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_10">
           <item>
-           <widget class="QPushButton" name="bpCancel_Ftdi">
+           <widget class="QPushButton" name="pbCancel_Ftdi">
             <property name="enabled">
              <bool>false</bool>
             </property>
@@ -435,7 +435,7 @@
            </spacer>
           </item>
           <item>
-           <widget class="QPushButton" name="bpRun_Ftdi">
+           <widget class="QPushButton" name="pbRun_Ftdi">
             <property name="text">
              <string>Run</string>
             </property>
@@ -600,7 +600,7 @@
              <bool>false</bool>
             </property>
             <property name="text">
-             <string>RAW file</string>
+             <string>DAT file</string>
             </property>
             <property name="checkable">
              <bool>true</bool>
@@ -663,14 +663,14 @@
         <item>
          <widget class="QProgressBar" name="progressBar_Lpt">
           <property name="value">
-           <number>24</number>
+           <number>0</number>
           </property>
          </widget>
         </item>
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_7">
           <item>
-           <widget class="QPushButton" name="bpCancel_Lpt">
+           <widget class="QPushButton" name="pbCancel_Lpt">
             <property name="enabled">
              <bool>false</bool>
             </property>
@@ -693,7 +693,7 @@
            </spacer>
           </item>
           <item>
-           <widget class="QPushButton" name="bpRun_Lpt">
+           <widget class="QPushButton" name="pbRun_Lpt">
             <property name="text">
              <string>Run</string>
             </property>

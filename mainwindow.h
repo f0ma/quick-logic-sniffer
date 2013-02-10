@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QFileDialog>
 #include <lptrecorder.h>
 #include <ftdirecorder.h>
 
@@ -26,13 +27,8 @@ private slots:
     void update_lptrec_state();
     void update_ftdirec_state();
 
-    void on_bpRun_Ftdi_clicked();
 
-    void on_bpCancel_Ftdi_clicked();
 
-    void on_bpRun_Lpt_clicked();
-
-    void on_bpCancel_Lpt_clicked();
 
     void on_pbBrowse_Lpt_clicked();
 
@@ -41,6 +37,14 @@ private slots:
     void disabled_mode_Lpt();
 
     void on_cbMicronasMode_LPT_stateChanged(int arg1);
+
+    void on_pbRun_Lpt_clicked();
+
+    void on_pbCancel_Lpt_clicked();
+
+    void on_pbCancel_Ftdi_clicked();
+
+    void on_pbRun_Ftdi_clicked();
 
 public slots:
     void ftdi_progress(int i);

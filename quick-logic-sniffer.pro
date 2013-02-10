@@ -14,11 +14,13 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     lptrecorder.cpp \
     ftdirecorder.cpp \
-    winioprovider.cpp
+    winioprovider.cpp \
+    ftdiinterfaceprovider.cpp
 
 HEADERS  += mainwindow.h \
     lptrecorder.h \
     ftdirecorder.h \
-    winioprovider.h
+    winioprovider.h \
+    ftdiinterfaceprovider.h
 
 FORMS    += mainwindow.ui
