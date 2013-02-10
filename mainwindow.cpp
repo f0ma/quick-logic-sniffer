@@ -9,6 +9,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->swPages->setCurrentIndex(0);
     ftdirec = NULL;
     lptrec = NULL;
+    progtimer = new QTimer(this);
+    progtimer->setSingleShot(false);
+    progtimer->setInterval(100);
 }
 
 MainWindow::~MainWindow()
@@ -25,6 +28,7 @@ void MainWindow::on_pbStartNext_clicked()
         ui->swPages->setCurrentIndex(2);
         connect(lptrec,SIGNAL(recordStarted()),this,SLOT(lpt_started()));
         connect(lptrec,SIGNAL(recordEnded()),this,SLOT(lpt_finished()));
+        connect(progtimer,SIGNAL(timeout()),this,SLOT(lpt_progress()));
         update_lptrec_state();
 
     }
@@ -35,6 +39,7 @@ void MainWindow::on_pbStartNext_clicked()
         ui->swPages->setCurrentIndex(1);
         connect(ftdirec,SIGNAL(recordStarted()),this,SLOT(ftdi_started()));
         connect(ftdirec,SIGNAL(recordEnded()),this,SLOT(ftdi_finished()));
+        connect(progtimer,SIGNAL(timeout()),this,SLOT(ftdi_progress()));
         update_ftdirec_state();
     }
 
@@ -68,26 +73,40 @@ void MainWindow::update_ftdirec_state()
     else disabled_mode_Ftdi();
 }
 
-void MainWindow::ftdi_progress(int i)
+void MainWindow::ftdi_progress()
 {
-    ui->progressBar_Ftdi->setValue(i);
+    ui->progressBar_Ftdi->setValue(ftdirec->progress());
 }
 
-void MainWindow::lpt_progress(int i)
+void MainWindow::lpt_progress()
 {
-    ui->progressBar_Lpt->setValue(i);
+    ui->progressBar_Lpt->setValue(lptrec->progress());
 }
 
 void MainWindow::ftdi_finished()
 {
     normal_mode_Ftdi();
     ui->progressBar_Ftdi->setValue(100);
+
+    QFile f(ui->lePathToSave_Lpt->text());
+    if (!f.open(QIODevice::WriteOnly)) return;
+
+    f.write(ftdirec->getData());
+
+    f.close();
 }
 
 void MainWindow::lpt_finished()
 {
    normal_mode_Lpt();
    ui->progressBar_Lpt->setValue(0);
+
+   QFile f(ui->lePathToSave_Lpt->text());
+   if (!f.open(QIODevice::WriteOnly)) return;
+
+   f.write(lptrec->getData());
+
+   f.close();
 }
 
 void MainWindow::ftdi_started()
@@ -175,6 +194,7 @@ void MainWindow::record_mode_Ftdi()
     ui->pbCancel_Ftdi->setEnabled(true);
     ui->cbVCDsave_Ftdi->setEnabled(false);
     ui->cbOSDsave_Ftdi->setEnabled(false);
+    progtimer->start();
 }
 
 void MainWindow::normal_mode_Ftdi()
@@ -187,6 +207,7 @@ void MainWindow::normal_mode_Ftdi()
     ui->pbCancel_Ftdi->setEnabled(false);
     ui->cbVCDsave_Ftdi->setEnabled(true);
     ui->cbOSDsave_Ftdi->setEnabled(true);
+    progtimer->stop();
 }
 
 void MainWindow::disabled_mode_Ftdi()
@@ -206,6 +227,7 @@ void MainWindow::record_mode_Lpt()
     ui->cbVCDsave_Lpt->setEnabled(false);
     ui->cbOSDsave_Lpt->setEnabled(false);
     ui->cbMicronasMode_LPT->setEnabled(false);
+    progtimer->start();
 }
 
 void MainWindow::normal_mode_Lpt()
@@ -219,6 +241,7 @@ void MainWindow::normal_mode_Lpt()
     ui->cbVCDsave_Lpt->setEnabled(true);
     ui->cbOSDsave_Lpt->setEnabled(true);
     ui->cbMicronasMode_LPT->setEnabled(true);
+    progtimer->stop();
 }
 
 void MainWindow::disabled_mode_Lpt()

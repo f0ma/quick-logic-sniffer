@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QFileDialog>
 #include <QStringList>
+#include <QTimer>
 #include <lptrecorder.h>
 #include <ftdirecorder.h>
 
@@ -17,6 +18,7 @@ class MainWindow : public QMainWindow
 
     LptRecorder * lptrec;
     FTDIRecorder * ftdirec;
+    QTimer * progtimer;
     
 public:
     explicit MainWindow(QWidget *parent = 0);
@@ -54,8 +56,8 @@ private slots:
     void on_pbBrowse_Ftdi_clicked();
 
 public slots:
-    void ftdi_progress(int i);
-    void lpt_progress(int i);
+    void ftdi_progress();
+    void lpt_progress();
 
     void ftdi_finished();
     void lpt_finished();
