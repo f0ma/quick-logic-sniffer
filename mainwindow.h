@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QFileDialog>
+#include <QStringList>
 #include <lptrecorder.h>
 #include <ftdirecorder.h>
 
@@ -45,6 +46,12 @@ private slots:
     void on_pbCancel_Ftdi_clicked();
 
     void on_pbRun_Ftdi_clicked();
+
+    void record_mode_Ftdi();
+    void normal_mode_Ftdi();
+    void disabled_mode_Ftdi();
+
+    void on_pbBrowse_Ftdi_clicked();
 
 public slots:
     void ftdi_progress(int i);

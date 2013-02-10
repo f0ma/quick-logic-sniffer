@@ -101,7 +101,7 @@ void LptRecorder::setMode(bool m)
 void LptRecorder::startRecord()
 {
     setMode(micronasMode);
-
+    cancelRequared = false;
     this->start(QThread::HighPriority);
 
 }
@@ -110,11 +110,15 @@ void LptRecorder::cancel()
 {
     cancelRequared = true;
     this->wait();
+    cancelRequared = false;
 }
 
 void LptRecorder::run()
 {
     emit recordStarted();
+
+    delete [] data;
+    data = new unsigned char [bufferSize*2];
 
     addr = 0;
 

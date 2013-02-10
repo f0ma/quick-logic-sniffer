@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QThread>
 #include <QStringList>
+#include <QVector>
 #include "ftdiinterfaceprovider.h"
 
 class FTDIRecorder : public QThread
@@ -14,6 +15,12 @@ class FTDIRecorder : public QThread
     unsigned char * data;
     unsigned int bufferSize;
     FtdiInterfaceProvider * prov;
+    QStringList enabledDevice;
+    unsigned int addr;
+    int enabledDeviceCount;
+    unsigned int speed;
+    bool cancelRequared;
+
 
 public:
     explicit FTDIRecorder(QObject *parent = 0);
@@ -22,6 +29,7 @@ public:
     QByteArray getData();
     QString getStatus();
     bool canRun();
+    int getChannalsCount();
 
     void run();
 
@@ -32,7 +40,7 @@ signals:
 public slots:
     void loadLibrary();
     QStringList getDevicesList();
-    void setEnabledDevices(QList<bool>);
+    void setEnabledDevices(QStringList l);
     void setSampleCount(unsigned int sz);
     void setSpeed(int speed);
 

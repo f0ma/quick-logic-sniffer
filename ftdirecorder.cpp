@@ -7,11 +7,76 @@ FTDIRecorder::FTDIRecorder(QObject *parent) :
     data = NULL;
     bufferSize = 0;
     prov = new FtdiInterfaceProvider();
+    enabledDeviceCount = 0;
+    cancelRequared = false;
 }
 
 void FTDIRecorder::run()
 {
+    if (enabledDeviceCount ==0) return;
 
+    emit recordStarted();
+
+    addr = 0;
+
+    delete [] data;
+    data = new unsigned char [bufferSize];
+
+    int oneStepBufferSize = 128;
+    unsigned char * buffer = new unsigned char [oneStepBufferSize];
+
+    FT_STATUS ftStatus;
+    QVector<FT_HANDLE> FTDevices;
+
+    QString serial;
+
+    foreach (serial,enabledDevice)
+    {
+        FT_HANDLE ftH;
+
+        ftStatus = prov->OpenEx((void *)serial.toLocal8Bit().constData(),1,&ftH);
+        ftStatus = prov->SetBitMode(ftH,0x00,0x00); // reset
+        ftStatus = prov->SetBitMode(ftH,0x00,0x01); // async bit-bang
+        ftStatus = prov->SetBaudRate(ftH,speed);
+
+        FTDevices.append(ftH);
+    }
+
+    FT_HANDLE dev;
+
+
+    while((cancelRequared == false) && (addr < bufferSize/enabledDeviceCount))
+    {
+
+    int chcount = 0;
+
+    foreach (dev,FTDevices)
+    {
+        DWORD readed =0;
+        ftStatus = prov->Read(dev,buffer,oneStepBufferSize,&readed);
+        if(ftStatus != 0) cancelRequared = true;
+
+        Q_ASSERT(readed == oneStepBufferSize);
+
+        for(int i =0;i<oneStepBufferSize;i++)
+        {
+                  data[(addr+i+chcount)*enabledDeviceCount]=buffer[i];
+        }
+              chcount++;
+    }
+
+    addr = addr + oneStepBufferSize;
+
+    }
+
+    delete buffer;
+
+    foreach (dev,FTDevices)
+    {
+        prov->Close(dev);
+    }
+
+    emit recordEnded();
 }
 
 void FTDIRecorder::loadLibrary()
@@ -43,19 +108,20 @@ QStringList FTDIRecorder::getDevicesList()
      return    QStringList();
 }
 
-void FTDIRecorder::setEnabledDevices(QList<bool>)
+void FTDIRecorder::setEnabledDevices(QStringList l)
 {
-
+    enabledDevice = l;
+    enabledDeviceCount =l.length();
 }
 
 void FTDIRecorder::setSampleCount(unsigned int sz)
 {
-
+    bufferSize = sz*enabledDeviceCount;
 }
 
 void FTDIRecorder::setSpeed(int speed)
 {
-
+    this->speed = speed;
 }
 
 FTDIRecorder::~FTDIRecorder()
@@ -65,7 +131,7 @@ FTDIRecorder::~FTDIRecorder()
 
 unsigned char FTDIRecorder::progress()
 {
-    return 0;
+    return ((double)addr * enabledDeviceCount)/((double)bufferSize)*100;
 }
 
 QByteArray FTDIRecorder::getData()
@@ -75,8 +141,13 @@ QByteArray FTDIRecorder::getData()
 
 QString FTDIRecorder::getStatus()
 {
-    if (status == "") return "OK";
+    if (status == "") return "Ready";
     return status;
+}
+
+int FTDIRecorder::getChannalsCount()
+{
+    return enabledDeviceCount;
 }
 
 bool FTDIRecorder::canRun()
@@ -86,10 +157,13 @@ bool FTDIRecorder::canRun()
 
 void FTDIRecorder::startRecord()
 {
-
+    cancelRequared = false;
+    this->start(QThread::HighPriority);
 }
 
 void FTDIRecorder::cancel()
 {
-
+    cancelRequared = true;
+    this->wait();
+    cancelRequared = false;
 }

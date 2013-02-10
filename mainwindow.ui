@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Quick Data Logger</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -25,7 +25,7 @@
         <item>
          <widget class="QLabel" name="label">
           <property name="text">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:14pt;&quot;&gt;Fast data recorder&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;Quick Data Logger&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
          </widget>
         </item>
@@ -54,7 +54,7 @@
           <item>
            <widget class="QRadioButton" name="rbLptMode">
             <property name="text">
-             <string>LPT mode (Hardware LPT port requared)</string>
+             <string>LPT mode (Onboard or PCI LPT port requared)</string>
             </property>
             <property name="checked">
              <bool>true</bool>
@@ -179,7 +179,7 @@
           <item>
            <widget class="QLabel" name="label_16">
             <property name="text">
-             <string>Checking:</string>
+             <string>State:</string>
             </property>
            </widget>
           </item>
@@ -250,24 +250,77 @@
           </item>
           <item>
            <widget class="QComboBox" name="cbSpeed_Ftdi">
+            <property name="currentIndex">
+             <number>7</number>
+            </property>
             <item>
              <property name="text">
-              <string>100 kHz</string>
+              <string>4.8 kHz</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>500 kHz</string>
+              <string>9.6 kHz</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>1 MHz</string>
+              <string>19.2 kHz</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>4 MHz</string>
+              <string>38.4 kHz</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>76.8 kHz</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>1.536 MHz</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>2.304 MHz</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>3.072 MHz</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>6.144 MHz</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>9.216 MHz</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>18.432 MHz</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>36.864 Mhz</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>73.728 Mhz</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>147.456 Mhz</string>
              </property>
             </item>
            </widget>
@@ -472,7 +525,7 @@
           <item>
            <widget class="QLabel" name="label_3">
             <property name="text">
-             <string>Checking:</string>
+             <string>State:</string>
             </property>
            </widget>
           </item>
