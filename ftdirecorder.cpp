@@ -60,7 +60,7 @@ void FTDIRecorder::run()
 
         for(int i =0;i<oneStepBufferSize;i++)
         {
-                  data[(addr+i+chcount)*enabledDeviceCount]=buffer[i];
+                  data[addr*enabledDeviceCount+i+chcount]=buffer[i];
         }
               chcount++;
     }
@@ -69,12 +69,13 @@ void FTDIRecorder::run()
 
     }
 
-    delete buffer;
 
     foreach (dev,FTDevices)
     {
         prov->Close(dev);
     }
+
+    delete [] buffer;
 
     emit recordEnded();
 }
@@ -136,7 +137,7 @@ unsigned char FTDIRecorder::progress()
 
 QByteArray FTDIRecorder::getData()
 {
-    return QByteArray((signed)data,bufferSize);
+    return QByteArray::fromRawData((const char*)data,bufferSize);
 }
 
 QString FTDIRecorder::getStatus()

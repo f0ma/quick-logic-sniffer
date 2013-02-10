@@ -88,10 +88,12 @@ void MainWindow::ftdi_finished()
     normal_mode_Ftdi();
     ui->progressBar_Ftdi->setValue(100);
 
-    QFile f(ui->lePathToSave_Lpt->text());
+    QFile f(ui->lePathToSave_Ftdi->text());
     if (!f.open(QIODevice::WriteOnly)) return;
 
-    f.write(ftdirec->getData());
+    QByteArray br = ftdirec->getData();
+
+    f.write(br);
 
     f.close();
 }
@@ -104,7 +106,9 @@ void MainWindow::lpt_finished()
    QFile f(ui->lePathToSave_Lpt->text());
    if (!f.open(QIODevice::WriteOnly)) return;
 
-   f.write(lptrec->getData());
+   QByteArray br = lptrec->getData();
+
+   f.write(br);
 
    f.close();
 }
@@ -139,7 +143,7 @@ void MainWindow::on_pbRun_Ftdi_clicked()
 
     unsigned int bs = 1024;
 
-    switch(ui->cbBufferSize_Ftdi->currentText().toInt())
+    switch(ui->cbBufferSize_Ftdi->currentIndex())
     {
         case 0:
             bs = 0xFFFF;
@@ -204,6 +208,7 @@ void MainWindow::normal_mode_Ftdi()
     ui->lePathToSave_Ftdi->setEnabled(true);
     ui->pbBrowse_Ftdi->setEnabled(true);
     ui->pbRun_Ftdi->setEnabled(true);
+    ui->cbSpeed_Ftdi->setEnabled(true);
     ui->pbCancel_Ftdi->setEnabled(false);
     ui->cbVCDsave_Ftdi->setEnabled(true);
     ui->cbOSDsave_Ftdi->setEnabled(true);
@@ -260,7 +265,7 @@ void MainWindow::on_pbRun_Lpt_clicked()
     lptrec->setPortNumber(ui->cbPortName_Lpt->currentIndex()+1);
     unsigned int bs = 1024;
 
-    switch(ui->cbBufferSize_Lpt->currentText().toInt())
+    switch(ui->cbBufferSize_Lpt->currentIndex())
     {
         case 0:
             bs = 0xFFFF;

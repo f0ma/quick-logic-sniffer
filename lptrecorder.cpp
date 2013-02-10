@@ -27,7 +27,7 @@ unsigned char LptRecorder::progress()
 
 QByteArray LptRecorder::getData()
 {
-    return QByteArray((signed)data,bufferSize);
+    return QByteArray::fromRawData((const char*)data,bufferSize);
 }
 
 QString LptRecorder::getStatus()

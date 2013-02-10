@@ -458,7 +458,7 @@
         <item>
          <widget class="QProgressBar" name="progressBar_Ftdi">
           <property name="value">
-           <number>24</number>
+           <number>0</number>
           </property>
          </widget>
         </item>
