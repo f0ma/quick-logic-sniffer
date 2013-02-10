@@ -4,6 +4,9 @@
 #include <QObject>
 #include <QLibrary>
 
+#ifdef Q_WS_WIN
+#include <windows.h>
+#else
 typedef unsigned int UINT;
 typedef char* LPCTSTR;
 typedef unsigned int DWORD;
@@ -13,10 +16,10 @@ typedef unsigned char UCHAR;
 typedef unsigned long ULONG;
 typedef unsigned int* PDWORD;
 typedef unsigned int* LPDWORD;
+#endif
 
 typedef void*	FT_HANDLE;
 typedef ULONG	FT_STATUS;
-
 
 typedef struct {
     ULONG Flags;

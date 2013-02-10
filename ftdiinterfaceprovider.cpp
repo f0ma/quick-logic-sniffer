@@ -27,6 +27,7 @@ int FtdiInterfaceProvider::load()
     SetBaudRate = (PrototypeSetBaudRate) lib.resolve("FT_SetBaudRate");
     SetBitMode = (PrototypeSetBitMode) lib.resolve("FT_SetBitMode");
 
+     return 1;
 }
 
 void FtdiInterfaceProvider::unload()
