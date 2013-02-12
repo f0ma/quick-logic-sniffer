@@ -151,6 +151,11 @@ int FTDIRecorder::getChannalsCount()
     return enabledDeviceCount;
 }
 
+int FTDIRecorder::getSpeed()
+{
+    return speed;
+}
+
 bool FTDIRecorder::canRun()
 {
     return status == "";

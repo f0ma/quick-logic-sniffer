@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QLibrary>
+#include <QDebug>
 
 #ifdef Q_WS_WIN
 #include <windows.h>

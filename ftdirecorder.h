@@ -30,6 +30,7 @@ public:
     QString getStatus();
     bool canRun();
     int getChannalsCount();
+    int getSpeed();
 
     void run();
 

@@ -12,6 +12,8 @@ MainWindow::MainWindow(QWidget *parent) :
     progtimer = new QTimer(this);
     progtimer->setSingleShot(false);
     progtimer->setInterval(100);
+    ui->cbVCDsave_Ftdi->setVisible(false);
+    ui->cbVCDsave_Lpt->setVisible(false);
 }
 
 MainWindow::~MainWindow()
@@ -83,6 +85,82 @@ void MainWindow::lpt_progress()
     ui->progressBar_Lpt->setValue(lptrec->progress());
 }
 
+bool MainWindow::storeToOSL(QByteArray data,unsigned int channals,unsigned int frq,QString filename,bool lptmode = false)
+{
+    QFile outfile(filename);
+    outfile.open(QIODevice::WriteOnly);
+    if (!outfile.isOpen()) return false;
+
+
+    QVector <QString> osdText;
+    osdText << QString(";Rate: %1\r\n").arg(frq);
+    osdText << QString(";Channels: %1\r\n").arg(channals);
+    qint64 currentword;
+    qint64 oldword;
+    qint64 cd,cd1,cd2;
+    QString sn;
+
+    qint64 mask = 0xFF00;
+    if (lptmode) mask = 0xF800;
+
+
+   for(int i =0;i< data.size();i=i+channals/8)
+   {
+
+       if (i % 100000 == 0)
+       {
+           osdText.reserve(100000);
+       }
+
+
+   switch(channals/8)
+   {
+   case 1:
+   currentword = (unsigned char) data[i];
+   break;
+
+   case 2:
+   cd = ((unsigned char) data[i+1]);
+   currentword = ((cd<<8)&mask)+ ((unsigned char) data[i]);
+   break;
+
+   case 3:
+   cd1 = ((unsigned char) data[i+2]);
+   cd = ((unsigned char) data[i+1]);
+   currentword = ((cd1<<16)&0xFF0000) + ((cd<<8)&0xFF00)+ ((unsigned char) data[i]);
+   break;
+
+   case 4:
+   cd2 = ((unsigned char) data[i+3]);
+   cd1 = ((unsigned char) data[i+2]);
+   cd = ((unsigned char) data[i+1]);
+   currentword = ((cd2<<24)&0xFF000000)+((cd1<<16)&0xFF0000)+((cd<<8)&0xFF00)+ ((unsigned char)data[i]);
+   break;
+
+   }
+
+   if(currentword != oldword || i == data.size()-channals/8)
+   {
+       sn.setNum(currentword,16);
+       osdText << QString("%1@%2\r\n").arg(sn).arg(i/(channals/8));
+   }
+
+   oldword=currentword;
+   }
+
+
+
+   QString s;
+   foreach(s,osdText)
+       outfile.write(s.toAscii());
+   outfile.close();
+
+//       emit progress(100);
+//       emit success();
+    return true;
+
+}
+
 void MainWindow::ftdi_finished()
 {
     normal_mode_Ftdi();
@@ -96,6 +174,12 @@ void MainWindow::ftdi_finished()
     f.write(br);
 
     f.close();
+
+    if(ui->cbOSDsave_Ftdi->isChecked())
+    {
+
+       storeToOSL(br,ftdirec->getChannalsCount()*8,ftdirec->getSpeed()*16,ui->lePathToSave_Ftdi->text().replace(".dat",".osl"));
+    }
 }
 
 void MainWindow::lpt_finished()
@@ -111,6 +195,11 @@ void MainWindow::lpt_finished()
    f.write(br);
 
    f.close();
+
+   if(ui->cbOSDsave_Lpt->isChecked())
+   {
+       storeToOSL(br,16,400000,ui->lePathToSave_Lpt->text().replace(".dat",".osl"));
+   }
 }
 
 void MainWindow::ftdi_started()

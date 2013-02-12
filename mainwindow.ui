@@ -197,7 +197,7 @@
           <item>
            <widget class="QLabel" name="label_12">
             <property name="text">
-             <string>Recording endpoints:</string>
+             <string>Recording channals:</string>
             </property>
            </widget>
           </item>

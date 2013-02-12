@@ -2,7 +2,11 @@
 
 FtdiInterfaceProvider::FtdiInterfaceProvider()
 {
+#ifdef Q_WS_WIN
     lib.setFileName("ftd2xx.dll");
+#else
+    lib.setFileName("./libftd2xx");
+#endif
     initOk = false;
 }
 
@@ -15,6 +19,7 @@ int FtdiInterfaceProvider::load()
     if(!lib.isLoaded())
     {
         initOk = false;
+        qDebug() << lib.errorString();
         return 0;
     }
 

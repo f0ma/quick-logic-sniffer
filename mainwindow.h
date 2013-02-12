@@ -23,6 +23,8 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+
+    bool storeToOSL(QByteArray data,unsigned int channals,unsigned int frq,QString filename, bool lptmode);
     
 private slots:
     void on_pbStartNext_clicked();
