@@ -178,7 +178,7 @@ void MainWindow::ftdi_finished()
     if(ui->cbOSDsave_Ftdi->isChecked())
     {
 
-       storeToOSL(br,ftdirec->getChannalsCount()*8,ftdirec->getSpeed()*16,ui->lePathToSave_Ftdi->text().replace(".dat",".osl"));
+       storeToOSL(br,ftdirec->getChannalsCount()*8,ftdirec->getSpeed()*16,ui->lePathToSave_Ftdi->text().replace(".dat",".ols"));
     }
 }
 
@@ -198,7 +198,7 @@ void MainWindow::lpt_finished()
 
    if(ui->cbOSDsave_Lpt->isChecked())
    {
-       storeToOSL(br,16,400000,ui->lePathToSave_Lpt->text().replace(".dat",".osl"));
+       storeToOSL(br,16,400000,ui->lePathToSave_Lpt->text().replace(".dat",".ols"),true);
    }
 }
 
