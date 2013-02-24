@@ -17,6 +17,8 @@ typedef unsigned char UCHAR;
 typedef unsigned long ULONG;
 typedef unsigned int* PDWORD;
 typedef unsigned int* LPDWORD;
+typedef void*	PVOID;
+typedef void*	LPVOID;
 #endif
 
 typedef void*	FT_HANDLE;
@@ -55,30 +57,22 @@ class FtdiInterfaceProvider
 public:
 
 #ifdef Q_WS_WIN
-    typedef FT_STATUS (__stdcall *PrototypeCreateDeviceInfoList)(LPDWORD lpdwNumDevs);
-    typedef FT_DEVICE_LIST_INFO_NODE * (__stdcall *PrototypeGetDeviceInfoList)(FT_DEVICE_LIST_INFO_NODE *pDest,LPDWORD lpdwNumDevs);
-
-    typedef FT_STATUS (__stdcall *PrototypeOpenEx)(PVOID pArg1,DWORD Flags,FT_HANDLE *pHandle);
-    typedef FT_STATUS (__stdcall *PrototypeClose)(FT_HANDLE ftHandle);
-
-    typedef FT_STATUS (__stdcall *PrototypeRead)(FT_HANDLE ftHandle,LPVOID lpBuffer,DWORD dwBytesToRead,LPDWORD lpBytesReturned);
-    typedef FT_STATUS (__stdcall *PrototypeWrite)(FT_HANDLE ftHandle, LPVOID lpBuffer,DWORD dwBytesToWrite,LPDWORD lpBytesWritten);
-
-    typedef FT_STATUS (__stdcall *PrototypeSetBaudRate)(FT_HANDLE ftHandle,ULONG BaudRate);
-    typedef FT_STATUS (__stdcall *PrototypeSetBitMode)(FT_HANDLE ftHandle,UCHAR ucMask,UCHAR ucEnable);
+#define IMPORTED_FROM_LIBRARY __stdcall
 #else
-    typedef FT_STATUS (*PrototypeCreateDeviceInfoList)(LPDWORD lpdwNumDevs);
-    typedef FT_DEVICE_LIST_INFO_NODE * (*PrototypeGetDeviceInfoList)(FT_DEVICE_LIST_INFO_NODE *pDest,LPDWORD lpdwNumDevs);
-
-    typedef FT_STATUS (*PrototypeOpenEx)(void * pArg1,DWORD Flags,FT_HANDLE *pHandle);
-    typedef FT_STATUS (*PrototypeClose)(FT_HANDLE ftHandle);
-
-    typedef FT_STATUS (*PrototypeRead)(FT_HANDLE ftHandle,void * lpBuffer,DWORD dwBytesToRead,LPDWORD lpBytesReturned);
-    typedef FT_STATUS (*PrototypeWrite)(FT_HANDLE ftHandle, void * lpBuffer,DWORD dwBytesToWrite,LPDWORD lpBytesWritten);
-
-    typedef FT_STATUS (*PrototypeSetBaudRate)(FT_HANDLE ftHandle,ULONG BaudRate);
-    typedef FT_STATUS (*PrototypeSetBitMode)(FT_HANDLE ftHandle,UCHAR ucMask,UCHAR ucEnable);
+#define IMPORTED_FROM_LIBRARY 
 #endif
+
+    typedef FT_STATUS (IMPORTED_FROM_LIBRARY *PrototypeCreateDeviceInfoList)(LPDWORD lpdwNumDevs);
+    typedef FT_DEVICE_LIST_INFO_NODE * (IMPORTED_FROM_LIBRARY *PrototypeGetDeviceInfoList)(FT_DEVICE_LIST_INFO_NODE *pDest,LPDWORD lpdwNumDevs);
+
+    typedef FT_STATUS (IMPORTED_FROM_LIBRARY *PrototypeOpenEx)(PVOID pArg1,DWORD Flags,FT_HANDLE *pHandle);
+    typedef FT_STATUS (IMPORTED_FROM_LIBRARY *PrototypeClose)(FT_HANDLE ftHandle);
+
+    typedef FT_STATUS (IMPORTED_FROM_LIBRARY *PrototypeRead)(FT_HANDLE ftHandle,LPVOID lpBuffer,DWORD dwBytesToRead,LPDWORD lpBytesReturned);
+    typedef FT_STATUS (IMPORTED_FROM_LIBRARY *PrototypeWrite)(FT_HANDLE ftHandle, LPVOID lpBuffer,DWORD dwBytesToWrite,LPDWORD lpBytesWritten);
+
+    typedef FT_STATUS (IMPORTED_FROM_LIBRARY *PrototypeSetBaudRate)(FT_HANDLE ftHandle,ULONG BaudRate);
+    typedef FT_STATUS (IMPORTED_FROM_LIBRARY *PrototypeSetBitMode)(FT_HANDLE ftHandle,UCHAR ucMask,UCHAR ucEnable);
 
     PrototypeCreateDeviceInfoList CreateDeviceInfoList;
     PrototypeGetDeviceInfoList GetDeviceInfoList;

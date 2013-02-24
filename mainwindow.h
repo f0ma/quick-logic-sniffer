@@ -66,6 +66,7 @@ public slots:
 
     void ftdi_started();
     void lpt_started();
+    void renew_filename(QString s);
 
 
 private:

@@ -95,6 +95,7 @@ bool MainWindow::storeToOSL(QByteArray data,unsigned int channals,unsigned int f
     QVector <QString> osdText;
     osdText << QString(";Rate: %1\r\n").arg(frq);
     osdText << QString(";Channels: %1\r\n").arg(channals);
+    if(lptmode) osdText << QString(";EnabledChannels: 63743\r\n");
     qint64 currentword;
     qint64 oldword;
     qint64 cd,cd1,cd2;
@@ -180,6 +181,8 @@ void MainWindow::ftdi_finished()
 
        storeToOSL(br,ftdirec->getChannalsCount()*8,ftdirec->getSpeed()*16,ui->lePathToSave_Ftdi->text().replace(".dat",".ols"));
     }
+
+        renew_filename("FTDI");
 }
 
 void MainWindow::lpt_finished()
@@ -200,6 +203,34 @@ void MainWindow::lpt_finished()
    {
        storeToOSL(br,16,400000,ui->lePathToSave_Lpt->text().replace(".dat",".ols"),true);
    }
+
+
+    renew_filename("LPT");
+
+
+}
+
+void MainWindow::renew_filename(QString s)
+{
+    QRegExp rx("(.*?)-([0-9][0-9][0-9][0-9])\\.dat$");
+    QString oldFn;
+
+    if(s=="LPT")oldFn = ui->lePathToSave_Lpt->text();
+    if(s=="FTDI")oldFn = ui->lePathToSave_Ftdi->text();
+
+    QString nameHead = oldFn.replace(".dat","");
+
+    int num =0;
+
+    if (rx.indexIn(nameHead,0) != -1) {
+        nameHead = rx.cap(1);
+        num = rx.cap(2).toInt()+1;
+    }
+
+    QString newFn;
+    newFn = QString("%1-%2.dat").arg(nameHead).arg(num, 4, 10, QChar('0'));
+    if(s=="LPT")ui->lePathToSave_Lpt->setText(newFn);
+    if(s=="FTDI")ui->lePathToSave_Ftdi->setText(newFn);
 }
 
 void MainWindow::ftdi_started()
