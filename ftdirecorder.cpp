@@ -45,7 +45,7 @@ void FTDIRecorder::run()
     FT_HANDLE dev;
 
 
-    while((cancelRequared == false) && (addr+oneStepBufferSize*enabledDeviceCount < bufferSize))
+    while((cancelRequared == false) && (addr < bufferSize))
     {
 
     int chcount = 0;
@@ -60,6 +60,7 @@ void FTDIRecorder::run()
 
         for(int i =0;i<oneStepBufferSize;i++)
         {
+            if (addr+enabledDeviceCount*i+chcount>=bufferSize) break;
                   data[addr+enabledDeviceCount*i+chcount]=buffer[i];
         }
               chcount++;
@@ -132,7 +133,7 @@ FTDIRecorder::~FTDIRecorder()
 
 unsigned char FTDIRecorder::progress()
 {
-    return ((double)addr * enabledDeviceCount)/((double)bufferSize)*100;
+    return ((double)addr)/((double)bufferSize)*100;
 }
 
 QByteArray FTDIRecorder::getData()

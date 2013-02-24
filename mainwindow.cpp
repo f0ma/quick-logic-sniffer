@@ -63,6 +63,12 @@ void MainWindow::update_ftdirec_state()
     ui->cbEndpointList_Ftdi->clear();
     QString ser;
 
+    if (devs.length() ==0)
+    {
+        disabled_mode_Ftdi();
+        return;
+    }
+
     foreach(ser,devs)
     {
     QListWidgetItem * item = new QListWidgetItem(ser);
@@ -141,18 +147,18 @@ bool MainWindow::storeToOSL(QByteArray data,unsigned int channals,unsigned int f
 
    }
 
-   if(currentword != oldword || i == data.size()-channals/8)
+   if(currentword != oldword || i == data.size()-channals/8 || i ==0)
    {
        
 	   if(!micronasmode)
 	   {
-	   osdText << QString("%1@%2\r\n").arg(sn).arg(i/(channals/8));
-	   sn.setNum(currentword,16);
+           sn.setNum(currentword,16);
+           osdText << QString("%1@%2\r\n").arg(sn).arg(i/(channals/8));
 	   }
 	   else
 	   {
            sn.setNum((currentword>>0xE)&3,16);
-	   osdText << QString("%1@%2\r\n").arg(sn).arg(i/(channals/8));
+           osdText << QString("%1@%2\r\n").arg(sn).arg(i/(channals/8));
 	   }
    }
 
