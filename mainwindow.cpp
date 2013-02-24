@@ -85,7 +85,7 @@ void MainWindow::lpt_progress()
     ui->progressBar_Lpt->setValue(lptrec->progress());
 }
 
-bool MainWindow::storeToOSL(QByteArray data,unsigned int channals,unsigned int frq,QString filename,bool lptmode = false)
+bool MainWindow::storeToOSL(QByteArray data,unsigned int channals,unsigned int frq,QString filename,bool lptmode = false,bool micronasmode=false)
 {
     QFile outfile(filename);
     outfile.open(QIODevice::WriteOnly);
@@ -94,7 +94,8 @@ bool MainWindow::storeToOSL(QByteArray data,unsigned int channals,unsigned int f
 
     QVector <QString> osdText;
     osdText << QString(";Rate: %1\r\n").arg(frq);
-    osdText << QString(";Channels: %1\r\n").arg(channals);
+    if(!micronasmode)osdText << QString(";Channels: %1\r\n").arg(channals);
+	else osdText << QString(";Channels: 2\r\n");
     if(lptmode) osdText << QString(";EnabledChannels: 63743\r\n");
     qint64 currentword;
     qint64 oldword;
@@ -142,8 +143,17 @@ bool MainWindow::storeToOSL(QByteArray data,unsigned int channals,unsigned int f
 
    if(currentword != oldword || i == data.size()-channals/8)
    {
-       sn.setNum(currentword,16);
-       osdText << QString("%1@%2\r\n").arg(sn).arg(i/(channals/8));
+       
+	   if(!micronasmode)
+	   {
+	   osdText << QString("%1@%2\r\n").arg(sn).arg(i/(channals/8));
+	   sn.setNum(currentword,16);
+	   }
+	   else
+	   {
+           sn.setNum((currentword>>0xE)&3,16);
+	   osdText << QString("%1@%2\r\n").arg(sn).arg(i/(channals/8));
+	   }
    }
 
    oldword=currentword;
@@ -179,7 +189,7 @@ void MainWindow::ftdi_finished()
     if(ui->cbOSDsave_Ftdi->isChecked())
     {
 
-       storeToOSL(br,ftdirec->getChannalsCount()*8,ftdirec->getSpeed()*16,ui->lePathToSave_Ftdi->text().replace(".dat",".ols"));
+       storeToOSL(br,ftdirec->getChannalsCount()*8,ftdirec->getSpeed()*5,ui->lePathToSave_Ftdi->text().replace(".dat",".ols"));
     }
 
         renew_filename("FTDI");
@@ -201,7 +211,7 @@ void MainWindow::lpt_finished()
 
    if(ui->cbOSDsave_Lpt->isChecked())
    {
-       storeToOSL(br,16,400000,ui->lePathToSave_Lpt->text().replace(".dat",".ols"),true);
+       storeToOSL(br,16,400000,ui->lePathToSave_Lpt->text().replace(".dat",".ols"),true,ui->cbMicronasMode_LPT->isChecked());
    }
 
 
@@ -212,7 +222,7 @@ void MainWindow::lpt_finished()
 
 void MainWindow::renew_filename(QString s)
 {
-    QRegExp rx("(.*?)-([0-9][0-9][0-9][0-9])\\.dat$");
+    QRegExp rx("(.*)-([0-9][0-9][0-9][0-9])");
     QString oldFn;
 
     if(s=="LPT")oldFn = ui->lePathToSave_Lpt->text();
@@ -247,6 +257,13 @@ void MainWindow::lpt_started()
 
 void MainWindow::on_pbRun_Ftdi_clicked()
 {
+    if(ui->lePathToSave_Ftdi->text().isEmpty())
+    {
+    QMessageBox::warning(this, tr("Quick data logger"),
+                                tr("Enter the file name to save data"),
+                                QMessageBox::Cancel);
+    return;
+}
 //    ftdirec->setSpeed();
 //    ftdirec->setsetBufferSize();
 

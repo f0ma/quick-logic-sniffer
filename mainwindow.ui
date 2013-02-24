@@ -251,76 +251,76 @@
           <item>
            <widget class="QComboBox" name="cbSpeed_Ftdi">
             <property name="currentIndex">
-             <number>7</number>
+             <number>0</number>
             </property>
             <item>
              <property name="text">
-              <string>4.8 kHz</string>
+              <string>1.5 kHz</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>9.6 kHz</string>
+              <string>3 kHz</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>19.2 kHz</string>
+              <string>6 kHz</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>38.4 kHz</string>
+              <string>12 kHz</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>76.8 kHz</string>
+              <string>24 kHz</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>1.536 MHz</string>
+              <string>48 kHz</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>2.304 MHz</string>
+              <string>72 kHz</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>3.072 MHz</string>
+              <string>96 kHz</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>6.144 MHz</string>
+              <string>192 kHz</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>9.216 MHz</string>
+              <string>288 kHz</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>18.432 MHz</string>
+              <string>576 kHz</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>36.864 Mhz</string>
+              <string>1.152 Mhz</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>73.728 Mhz</string>
+              <string>2.304 Mhz</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>147.456 Mhz</string>
+              <string>4.608 Mhz</string>
              </property>
             </item>
            </widget>
@@ -409,6 +409,9 @@
            <widget class="QCheckBox" name="cbOSDsave_Ftdi">
             <property name="text">
              <string>OSD file</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -667,6 +670,9 @@
            <widget class="QCheckBox" name="cbOSDsave_Lpt">
             <property name="text">
              <string>OSD file</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
             </property>
            </widget>
           </item>

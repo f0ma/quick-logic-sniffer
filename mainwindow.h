@@ -5,8 +5,10 @@
 #include <QFileDialog>
 #include <QStringList>
 #include <QTimer>
+#include <QMessageBox>
 #include <lptrecorder.h>
 #include <ftdirecorder.h>
+
 
 namespace Ui {
 class MainWindow;
@@ -24,7 +26,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    bool storeToOSL(QByteArray data,unsigned int channals,unsigned int frq,QString filename, bool lptmode);
+    bool storeToOSL(QByteArray data,unsigned int channals,unsigned int frq,QString filename, bool lptmode,bool micronasmode);
     
 private slots:
     void on_pbStartNext_clicked();

@@ -45,7 +45,7 @@ void FTDIRecorder::run()
     FT_HANDLE dev;
 
 
-    while((cancelRequared == false) && (addr < bufferSize/enabledDeviceCount))
+    while((cancelRequared == false) && (addr+oneStepBufferSize*enabledDeviceCount < bufferSize))
     {
 
     int chcount = 0;
@@ -60,12 +60,12 @@ void FTDIRecorder::run()
 
         for(int i =0;i<oneStepBufferSize;i++)
         {
-                  data[addr*enabledDeviceCount+i+chcount]=buffer[i];
+                  data[addr+enabledDeviceCount*i+chcount]=buffer[i];
         }
               chcount++;
     }
 
-    addr = addr + oneStepBufferSize;
+    addr = addr + oneStepBufferSize*enabledDeviceCount;
 
     }
 
