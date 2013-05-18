@@ -8,6 +8,7 @@
 #include <QMessageBox>
 #include <lptrecorder.h>
 #include <ftdirecorder.h>
+#include <oslproducer.h>
 
 
 namespace Ui {
@@ -26,7 +27,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    bool storeToOSL(QByteArray data,unsigned int channals,unsigned int frq,QString filename, bool lptmode,bool micronasmode);
+    bool storeToOSL(QByteArray data,unsigned int channals,unsigned int frq,QString filename, bool lptmode,bool micronasmode,int split);
     
 private slots:
     void on_pbStartNext_clicked();
@@ -62,6 +63,7 @@ private slots:
 public slots:
     void ftdi_progress();
     void lpt_progress();
+    void progress(int value);
 
     void ftdi_finished();
     void lpt_finished();

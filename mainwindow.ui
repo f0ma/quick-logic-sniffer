@@ -332,7 +332,7 @@
           <item>
            <widget class="QLabel" name="label_11">
             <property name="text">
-             <string>Buffer count:</string>
+             <string>Buffer count (per channal):</string>
             </property>
            </widget>
           </item>
@@ -409,6 +409,16 @@
            <widget class="QCheckBox" name="cbOSDsave_Ftdi">
             <property name="text">
              <string>OSD file</string>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="cbOSDSplitsave_Ftdi">
+            <property name="text">
+             <string>Split OSD file</string>
             </property>
             <property name="checked">
              <bool>true</bool>

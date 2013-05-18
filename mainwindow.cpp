@@ -91,89 +91,20 @@ void MainWindow::lpt_progress()
     ui->progressBar_Lpt->setValue(lptrec->progress());
 }
 
-bool MainWindow::storeToOSL(QByteArray data,unsigned int channals,unsigned int frq,QString filename,bool lptmode = false,bool micronasmode=false)
+void MainWindow::progress(int value)
 {
-    QFile outfile(filename);
-    outfile.open(QIODevice::WriteOnly);
-    if (!outfile.isOpen()) return false;
+    ui->progressBar_Ftdi->setValue(value);
+    ui->progressBar_Lpt->setValue(value);
+}
 
+bool MainWindow::storeToOSL(QByteArray data,unsigned int channals,unsigned int frq,QString filename,bool lptmode = false,bool micronasmode=false,int split=0)
+{
 
-    QVector <QString> osdText;
-    osdText << QString(";Rate: %1\r\n").arg(frq);
-    if(!micronasmode)osdText << QString(";Channels: %1\r\n").arg(channals);
-	else osdText << QString(";Channels: 2\r\n");
-    if(lptmode) osdText << QString(";EnabledChannels: 63743\r\n");
-    qint64 currentword;
-    qint64 oldword;
-    qint64 cd,cd1,cd2;
-    QString sn;
+    OSLProducer * p = new OSLProducer();
+    OSLSaver * s = new OSLSaver();
+    p->produceData(data,channals,frq,lptmode,micronasmode);
+    s->produceFile(p,filename,split);
 
-    qint64 mask = 0xFF00;
-    if (lptmode) mask = 0xF800;
-
-
-   for(int i =0;i< data.size();i=i+channals/8)
-   {
-
-       if (i % 100000 == 0)
-       {
-           osdText.reserve(100000);
-       }
-
-
-   switch(channals/8)
-   {
-   case 1:
-   currentword = (unsigned char) data[i];
-   break;
-
-   case 2:
-   cd = ((unsigned char) data[i+1]);
-   currentword = ((cd<<8)&mask)+ ((unsigned char) data[i]);
-   break;
-
-   case 3:
-   cd1 = ((unsigned char) data[i+2]);
-   cd = ((unsigned char) data[i+1]);
-   currentword = ((cd1<<16)&0xFF0000) + ((cd<<8)&0xFF00)+ ((unsigned char) data[i]);
-   break;
-
-   case 4:
-   cd2 = ((unsigned char) data[i+3]);
-   cd1 = ((unsigned char) data[i+2]);
-   cd = ((unsigned char) data[i+1]);
-   currentword = ((cd2<<24)&0xFF000000)+((cd1<<16)&0xFF0000)+((cd<<8)&0xFF00)+ ((unsigned char)data[i]);
-   break;
-
-   }
-
-   if(currentword != oldword || i == data.size()-channals/8 || i ==0)
-   {
-       
-	   if(!micronasmode)
-	   {
-           sn.setNum(currentword,16);
-           osdText << QString("%1@%2\r\n").arg(sn).arg(i/(channals/8));
-	   }
-	   else
-	   {
-           sn.setNum((currentword>>0xE)&3,16);
-           osdText << QString("%1@%2\r\n").arg(sn).arg(i/(channals/8));
-	   }
-   }
-
-   oldword=currentword;
-   }
-
-
-
-   QString s;
-   foreach(s,osdText)
-       outfile.write(s.toAscii());
-   outfile.close();
-
-//       emit progress(100);
-//       emit success();
     return true;
 
 }
@@ -197,6 +128,14 @@ void MainWindow::ftdi_finished()
 
        storeToOSL(br,ftdirec->getChannalsCount()*8,ftdirec->getSpeed()*5,ui->lePathToSave_Ftdi->text().replace(".dat",".ols"));
     }
+
+    if(ui->cbOSDSplitsave_Ftdi->isChecked())
+    {
+
+       storeToOSL(br,ftdirec->getChannalsCount()*8,ftdirec->getSpeed()*5,ui->lePathToSave_Ftdi->text().replace(".dat",".ols"),false,false,100000);
+    }
+
+
 
         renew_filename("FTDI");
 }
@@ -341,6 +280,7 @@ void MainWindow::record_mode_Ftdi()
     ui->pbCancel_Ftdi->setEnabled(true);
     ui->cbVCDsave_Ftdi->setEnabled(false);
     ui->cbOSDsave_Ftdi->setEnabled(false);
+    ui->cbOSDSplitsave_Ftdi->setEnabled(false);
     progtimer->start();
 }
 
@@ -355,6 +295,7 @@ void MainWindow::normal_mode_Ftdi()
     ui->pbCancel_Ftdi->setEnabled(false);
     ui->cbVCDsave_Ftdi->setEnabled(true);
     ui->cbOSDsave_Ftdi->setEnabled(true);
+    ui->cbOSDSplitsave_Ftdi->setEnabled(true);
     progtimer->stop();
 }
 
