@@ -102,7 +102,19 @@ QStringList FTDIRecorder::getDevicesList()
 
         for(int i = 0;i<numDevs;i++)
         {
-                r.append(devInfo[i].SerialNumber);
+            QString s="XXXXXXXXXXXXXXXX";
+            for(int k=0;k<s.length();k++)
+            {
+                s[k]=devInfo[i].SerialNumber[k];
+                if (devInfo[i].SerialNumber[k] == 0)
+                {
+                    s = s.mid(0,k);
+                    break;
+                }
+            }
+
+
+            r.append(s);
         }
 
         return r;

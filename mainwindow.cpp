@@ -14,6 +14,16 @@ MainWindow::MainWindow(QWidget *parent) :
     progtimer->setInterval(100);
     ui->cbVCDsave_Ftdi->setVisible(false);
     ui->cbVCDsave_Lpt->setVisible(false);
+    progress = NULL;
+
+
+    QSettings settings;
+
+    ui->lePathToSave_Lpt->setText(settings.value("LaseFileName","").toString());
+    ui->lePathToSave_Ftdi->setText(settings.value("LaseFileName","").toString());
+    renew_filename("LPT");
+    renew_filename("FTDI");
+
 }
 
 MainWindow::~MainWindow()
@@ -24,7 +34,7 @@ MainWindow::~MainWindow()
 void MainWindow::on_pbStartNext_clicked()
 {
 
-    if (ui->rbLptMode->isChecked())
+   if (ui->rbLptMode->isChecked())
     {
         lptrec = new LptRecorder(this) ;
         ui->swPages->setCurrentIndex(2);
@@ -91,11 +101,6 @@ void MainWindow::lpt_progress()
     ui->progressBar_Lpt->setValue(lptrec->progress());
 }
 
-void MainWindow::progress(int value)
-{
-    ui->progressBar_Ftdi->setValue(value);
-    ui->progressBar_Lpt->setValue(value);
-}
 
 bool MainWindow::storeToOSL(QByteArray data,unsigned int channals,unsigned int frq,QString filename,bool lptmode = false,bool micronasmode=false,int split=0)
 {
@@ -105,8 +110,29 @@ bool MainWindow::storeToOSL(QByteArray data,unsigned int channals,unsigned int f
     p->produceData(data,channals,frq,lptmode,micronasmode);
     s->produceFile(p,filename,split);
 
+    connect(s,SIGNAL(finished()),this,SLOT(endProgress()),Qt::QueuedConnection);
+
     return true;
 
+}
+
+
+void MainWindow::startProgress(QString label)
+{
+    delete progress;
+    progress = new QProgressDialog (this);
+    progress->setWindowModality(Qt::WindowModal);
+    progress->setLabelText("Storing files...");
+    progress->setCancelButton(0);
+    progress->setRange(0,0);
+    progress->setMinimumDuration(0);
+    progress->show();
+}
+
+void MainWindow::endProgress()
+{
+    delete progress;
+    progress = NULL;
 }
 
 void MainWindow::ftdi_finished()
@@ -114,6 +140,9 @@ void MainWindow::ftdi_finished()
     normal_mode_Ftdi();
     ui->progressBar_Ftdi->setValue(100);
 
+
+
+    startProgress("Saving DAT file...");
     QFile f(ui->lePathToSave_Ftdi->text());
     if (!f.open(QIODevice::WriteOnly)) return;
 
@@ -123,15 +152,26 @@ void MainWindow::ftdi_finished()
 
     f.close();
 
+    QFile df(ui->lePathToSave_Ftdi->text().replace(".dat",".diz"));
+    if (!df.open(QIODevice::WriteOnly)) return;
+
+
+
+    df.write((QString("Channals count: %1\r\nRecord Speed:%2\r\n").arg(ftdirec->getChannalsCount()*8).arg(ftdirec->getSpeed()*5)).toAscii());
+
+    df.close();
+
+    endProgress();
+
     if(ui->cbOSDsave_Ftdi->isChecked())
     {
-
+       startProgress("Saving OSL file...");
        storeToOSL(br,ftdirec->getChannalsCount()*8,ftdirec->getSpeed()*5,ui->lePathToSave_Ftdi->text().replace(".dat",".ols"));
     }
 
     if(ui->cbOSDSplitsave_Ftdi->isChecked())
     {
-
+       startProgress("Saving OSL-split file...");
        storeToOSL(br,ftdirec->getChannalsCount()*8,ftdirec->getSpeed()*5,ui->lePathToSave_Ftdi->text().replace(".dat",".ols"),false,false,100000);
     }
 
@@ -145,6 +185,7 @@ void MainWindow::lpt_finished()
    normal_mode_Lpt();
    ui->progressBar_Lpt->setValue(0);
 
+   startProgress("Saving DAT file...");
    QFile f(ui->lePathToSave_Lpt->text());
    if (!f.open(QIODevice::WriteOnly)) return;
 
@@ -153,10 +194,19 @@ void MainWindow::lpt_finished()
    f.write(br);
 
    f.close();
+   endProgress();
 
    if(ui->cbOSDsave_Lpt->isChecked())
    {
+       startProgress("Saving OSL file...");
        storeToOSL(br,16,400000,ui->lePathToSave_Lpt->text().replace(".dat",".ols"),true,ui->cbMicronasMode_LPT->isChecked());
+   }
+
+
+   if(ui->cbOSDSplitsave_Lpt->isChecked())
+   {
+       startProgress("Saving OSL-split file...");
+       storeToOSL(br,16,400000,ui->lePathToSave_Lpt->text().replace(".dat",".ols"),true,ui->cbMicronasMode_LPT->isChecked(),100000);
    }
 
 
@@ -173,6 +223,8 @@ void MainWindow::renew_filename(QString s)
     if(s=="LPT")oldFn = ui->lePathToSave_Lpt->text();
     if(s=="FTDI")oldFn = ui->lePathToSave_Ftdi->text();
 
+    if (oldFn == "") return;
+
     QString nameHead = oldFn.replace(".dat","");
 
     int num =0;
@@ -186,18 +238,25 @@ void MainWindow::renew_filename(QString s)
     newFn = QString("%1-%2.dat").arg(nameHead).arg(num, 4, 10, QChar('0'));
     if(s=="LPT")ui->lePathToSave_Lpt->setText(newFn);
     if(s=="FTDI")ui->lePathToSave_Ftdi->setText(newFn);
+
+    QSettings settings;
+    settings.setValue("LaseFileName",newFn);
 }
 
 void MainWindow::ftdi_started()
 {
     record_mode_Ftdi();
     ui->progressBar_Ftdi->setValue(0);
+    QSettings settings;
+    settings.setValue("LaseFileName",ui->lePathToSave_Ftdi->text());
 }
 
 void MainWindow::lpt_started()
 {
     record_mode_Lpt();
     ui->progressBar_Lpt->setValue(0);
+    QSettings settings;
+    settings.setValue("LaseFileName",ui->lePathToSave_Lpt->text());
 }
 
 void MainWindow::on_pbRun_Ftdi_clicked()
@@ -267,6 +326,8 @@ void MainWindow::on_pbBrowse_Lpt_clicked()
     if (fn=="")return;
     if(fn.endsWith(".dat")==false)fn.append(".dat");
     ui->lePathToSave_Lpt->setText(fn);
+    QSettings settings;
+    settings.setValue("LaseFileName",fn);
 }
 
 void MainWindow::record_mode_Ftdi()
@@ -391,4 +452,7 @@ void MainWindow::on_pbBrowse_Ftdi_clicked()
     if (fn=="")return;
     if(fn.endsWith(".dat")==false)fn.append(".dat");
     ui->lePathToSave_Ftdi->setText(fn);
+    QSettings settings;
+    settings.setValue("LaseFileName",fn);
+
 }

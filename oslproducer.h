@@ -9,6 +9,8 @@
 
 class OSLProducer : public QThread
 {
+
+
     void run();
 
 
@@ -24,10 +26,13 @@ class OSLProducer : public QThread
     
     void produceData(QByteArray data,unsigned int channals,unsigned int frq,bool lptmode,bool micronasmode);
 
+
+
 };
 
 class OSLSaver : public QThread
 {
+
     void run();
 
     OSLProducer* p;
@@ -36,6 +41,7 @@ class OSLSaver : public QThread
 
     public:
     void produceFile(OSLProducer* p,QString filename,int split);
+
 
 };
 

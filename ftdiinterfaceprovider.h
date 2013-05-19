@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QLibrary>
 #include <QDebug>
+#include <QDir>
 #include <QFileInfo>
 #include <QCoreApplication>
 #include <QProcess>

@@ -14,16 +14,24 @@ int FtdiInterfaceProvider::load()
 {
     if(initOk) return 1;
 
+    if (!lib.isLoaded())
+    {
+
 #ifndef Q_WS_WIN
     QProcess process;
-    process.start("python", QStringList() << (QFileInfo( QCoreApplication::applicationFilePath() ).filePath()+"/grant_full_access_to_ftdi_devices.py"));
+    process.start("python", QStringList() << (QString(QFileInfo( QCoreApplication::applicationFilePath() ).dir().path())+"/grant_full_access_to_ftdi_devices.py"));
+    qDebug() << ( QStringList() << (QString(QFileInfo( QCoreApplication::applicationFilePath() ).dir().path())+"/grant_full_access_to_ftdi_devices.py"));
     process.waitForFinished ( -1 );
 #endif
 
     lib.load();
 
+    }
+
     if(!lib.isLoaded())
     {
+
+
         initOk = false;
         qDebug() << lib.errorString();
         return 0;

@@ -18,7 +18,7 @@
     <item>
      <widget class="QStackedWidget" name="swPages">
       <property name="currentIndex">
-       <number>1</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="swpStart">
        <layout class="QVBoxLayout" name="verticalLayout">
@@ -680,6 +680,16 @@
            <widget class="QCheckBox" name="cbOSDsave_Lpt">
             <property name="text">
              <string>OSD file</string>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="cbOSDSplitsave_Lpt">
+            <property name="text">
+             <string>Split OSD file</string>
             </property>
             <property name="checked">
              <bool>true</bool>

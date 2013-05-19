@@ -6,6 +6,8 @@
 #include <QStringList>
 #include <QTimer>
 #include <QMessageBox>
+#include <QProgressDialog>
+#include <QSettings>
 #include <lptrecorder.h>
 #include <ftdirecorder.h>
 #include <oslproducer.h>
@@ -22,6 +24,7 @@ class MainWindow : public QMainWindow
     LptRecorder * lptrec;
     FTDIRecorder * ftdirec;
     QTimer * progtimer;
+     QProgressDialog * progress;
     
 public:
     explicit MainWindow(QWidget *parent = 0);
@@ -63,7 +66,6 @@ private slots:
 public slots:
     void ftdi_progress();
     void lpt_progress();
-    void progress(int value);
 
     void ftdi_finished();
     void lpt_finished();
@@ -71,6 +73,8 @@ public slots:
     void ftdi_started();
     void lpt_started();
     void renew_filename(QString s);
+    void startProgress(QString label);
+    void endProgress();
 
 
 private:
